@@ -1,0 +1,51 @@
+import { useApi } from "x402-vara";
+import { createTestPairs } from "@polkadot/keyring";
+import { KeyringPair } from "@polkadot/keyring/types";
+import {
+  blake2AsU8a,
+  signatureVerify,
+  sr25519Verify,
+} from "@polkadot/util-crypto";
+import { hexToU8a, u8aToHex } from "@polkadot/util";
+import { createUnsignedTransaction, signWithKeypair } from "x402-vara/client";
+
+const network = process.env.NETWORK;
+const amount = process.env.AMOUNT;
+const payTo = process.env.PAY_TO;
+
+if (!network || !amount || !payTo) {
+  console.error("failed to load env vars: NETWORK/AMOUNT/PAY_TO");
+  process.exit(1);
+}
+
+// 0. Get the keypairs
+const testKeypairs: KeyringPair[] = Object.values(createTestPairs());
+const alice = testKeypairs[1];
+
+// 1. Initialize Polkadot API
+const api = await useApi(network);
+
+// construct the tx
+const tx = api.tx.balances.transferKeepAlive(payTo, Number(amount) * 1e12);
+
+const unsignedTransaction = await createUnsignedTransaction(
+  api,
+  u8aToHex(alice.publicKey),
+  tx,
+);
+
+const { signature } = await signWithKeypair(
+  alice,
+  unsignedTransaction,
+  api,
+);
+
+const data = {
+  network: "vara-testnet",
+  unsignedTransaction,
+  signature,
+  signer: alice.address,
+};
+
+console.log(JSON.stringify(data, null, "  "));
+process.exit();

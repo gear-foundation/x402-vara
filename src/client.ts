@@ -1,9 +1,6 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import type { AxiosInstance } from "axios";
 import type { SignerPayloadJSON } from "@polkadot/types/types";
-import {
-  web3FromAddress,
-} from "@polkadot/extension-dapp";
 import type { WalletKeypair, KeyringPair, InjectedAccountWithMeta } from "./types";
 import { useApi } from "./utils";
 
@@ -51,21 +48,11 @@ export async function createUnsignedTransaction(
   return unsignedTransaction;
 }
 
-// injected extension accounts don't have the sign() method, while keyring pairs do
-const isKeyringPair = (x: any) => !! x.sign;
-
-export async function signWith(
+export async function signWithKeypair(
   keypair: WalletKeypair,
   unsignedTransaction: SignerPayloadJSON,
   api: ApiPromise,
 ): Promise<{ signature: string }> {
-  if (!isKeyringPair(keypair)) {
-    const injector = await web3FromAddress(keypair.address);
-    if (!injector.signer || !injector.signer.signPayload) {
-      throw new Error("No signer available from wallet");
-    }
-    return await injector.signer.signPayload(unsignedTransaction);
-  } else {
     const rawUnsignedTransaction = api.registry.createType(
       "ExtrinsicPayload",
       unsignedTransaction,
@@ -74,12 +61,12 @@ export async function signWith(
       },
     );
     return rawUnsignedTransaction.sign(keypair as KeyringPair);
-  }
 }
 
 export function withX402Interceptor(
   axiosClient: AxiosInstance,
   keypair: WalletKeypair,
+  signWith = signWithKeypair
 ): AxiosInstance {
   axiosClient.interceptors.response.use(
     (response) => {

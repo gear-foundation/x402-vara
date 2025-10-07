@@ -14,9 +14,16 @@ export {
 // Client utilities
 export {
   createUnsignedTransaction,
-  signWith,
+  signWithKeypair,
   withX402Interceptor,
 } from "./client";
+
+/*
+// Browser utilities
+export {
+  signWithWeb3,
+} from "./browser";
+*/
 
 // Types
 export type {

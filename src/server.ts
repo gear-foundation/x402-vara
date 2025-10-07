@@ -35,7 +35,7 @@ export function requirePayment(options: PaymentOptions) {
     const payload = req.headers["x-payment"] as string;
 
     if (!payload) {
-      const resource = `${req.originalUrl}`;
+      const resource = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
       res.status(402).json({
         x402Version: 1,
         error: "Payment required",
