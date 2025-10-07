@@ -4,7 +4,7 @@ import type { SignerPayloadJSON } from "@polkadot/types/types";
 import {
   web3FromAddress,
 } from "@polkadot/extension-dapp";
-import type { WalletKeypair } from "./types";
+import type { WalletKeypair, KeyringPair, InjectedAccountWithMeta } from "./types";
 import { useApi } from "./utils";
 
 export async function createUnsignedTransaction(
@@ -51,12 +51,15 @@ export async function createUnsignedTransaction(
   return unsignedTransaction;
 }
 
+// injected extension accounts don't have the sign() method, while keyring pairs do
+const isKeyringPair = (x: any) => !! x.sign;
+
 export async function signWith(
   keypair: WalletKeypair,
   unsignedTransaction: SignerPayloadJSON,
   api: ApiPromise,
 ): Promise<{ signature: string }> {
-  if ("meta" in keypair) {
+  if (!isKeyringPair(keypair)) {
     const injector = await web3FromAddress(keypair.address);
     if (!injector.signer || !injector.signer.signPayload) {
       throw new Error("No signer available from wallet");
@@ -70,7 +73,7 @@ export async function signWith(
         version: unsignedTransaction.version,
       },
     );
-    return rawUnsignedTransaction.sign(keypair);
+    return rawUnsignedTransaction.sign(keypair as KeyringPair);
   }
 }
 

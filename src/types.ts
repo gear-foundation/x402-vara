@@ -28,3 +28,4 @@ export interface TransactionResult {
 }
 
 export type WalletKeypair = KeyringPair | InjectedAccountWithMeta;
+export { InjectedAccountWithMeta, KeyringPair };
