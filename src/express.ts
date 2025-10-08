@@ -11,7 +11,7 @@ import {
   sendAndWaitForFinalization,
   useApi,
 } from "./utils";
-import type { PaymentData, PaymentOptions, TransactionResult } from "./types";
+import type { PaymentData, PaymentOptions, SettleResult } from "./types";
 import { settleWithApi, verifyWithApi } from "./server";
 
 /**

@@ -36,6 +36,7 @@ export {
 export type {
   PaymentData,
   PaymentOptions,
-  TransactionResult,
+  SettleResult,
+  VerifyResult,
   WalletKeypair,
 } from "./types";

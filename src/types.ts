@@ -18,11 +18,15 @@ export interface PaymentOptions {
   facilitator?: string;
 }
 
-export interface TransactionResult {
+export interface SettleResult {
   txHash: string | null;
   success: boolean;
   message: string | null;
-  blockHash: string | null;
+}
+
+export interface VerifyResult {
+  isValid: boolean;
+  invalidReason: string | null;
 }
 
 export type WalletKeypair = KeyringPair | InjectedAccountWithMeta;
