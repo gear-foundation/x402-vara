@@ -2,12 +2,13 @@
 
 x402 payment protocol implementation for Vara Network
 
+[![npm version](https://img.shields.io/npm/v/x402-vara.svg)](https://www.npmjs.com/package/x402-vara)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Installation
 
 ```bash
-npm install x402-vara
-# or
-bun add x402-vara
+bun i x402-vara
 ```
 
 ## Usage
