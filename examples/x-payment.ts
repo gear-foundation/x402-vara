@@ -1,4 +1,3 @@
-import { useApi } from "x402-vara";
 import { createTestPairs } from "@polkadot/keyring";
 import { KeyringPair } from "@polkadot/keyring/types";
 import {
@@ -7,7 +6,8 @@ import {
   sr25519Verify,
 } from "@polkadot/util-crypto";
 import { hexToU8a, u8aToHex } from "@polkadot/util";
-import { createUnsignedTransaction, signWithKeypair } from "x402-vara/client";
+import { createUnsignedTransaction, useApi } from "x402-vara/utils";
+import { signWithKeypair } from "x402-vara/client";
 
 const network = process.env.NETWORK;
 const amount = process.env.AMOUNT;

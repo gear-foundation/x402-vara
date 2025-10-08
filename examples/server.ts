@@ -1,4 +1,4 @@
-import { requirePayment } from "x402-vara/server";
+import { requirePayment } from "x402-vara/express";
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";

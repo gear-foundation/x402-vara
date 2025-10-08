@@ -15,7 +15,7 @@ bun add x402-vara
 ### Server-side (Express)
 
 ```typescript
-import { requirePayment, facilitatorRouter } from 'x402-vara/server';
+import { requirePayment, facilitatorRouter } from 'x402-vara/express';
 
 // Use the payment middleware
 app.get('/api/pay/premium',
@@ -37,22 +37,23 @@ app.get('/api/pay/premium',
 app.use('/api/facilitator', facilitatorRouter);
 ```
 
-### Client-side (React/Axios)
+### Client-side (Axios)
 
 ```typescript
 import { withX402Interceptor } from 'x402-vara/client';
 import axios from 'axios';
 
 // Create axios instance with x402 payment interceptor
-const apiClient = withX402Interceptor(axios.create(), walletClient);
+const apiClient = withX402Interceptor(axios.create(), keypair);
 
 // Make requests - payment will be handled automatically
-const response = await apiClient.get('/api/pay/premium');
+const response = await apiClient.get('http://localhost:3001/api/pay/premium');
 ```
 
 ## Used by
 
-- https://github.com/varazone/x402-vara-demo
+- https://github.com/varazone/x402-vara-express-demo
+- https://github.com/varazone/x402-vara-next-demo
 
 ## API Reference
 

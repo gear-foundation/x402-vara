@@ -1,7 +1,14 @@
-// Server utilities
+// express utilities
 export {
   requirePayment,
+  useFacilitator,
   facilitatorRouter,
+} from "./express";
+
+// Server utilities
+export {
+  verifyWithApi,
+  settleWithApi,
 } from "./server";
 
 export {
@@ -9,11 +16,11 @@ export {
   RpcMap,
   sendAndWaitForFinalization,
   useApi,
+  createUnsignedTransaction,
 } from "./utils";
 
 // Client utilities
 export {
-  createUnsignedTransaction,
   signWithKeypair,
   withX402Interceptor,
 } from "./client";
