@@ -18,7 +18,11 @@ import { settleWithApi, verifyWithApi } from "./server";
  * requirePayment middleware for x402 payment verification and submission
  */
 export function requirePayment(options: PaymentOptions) {
-  return async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  return async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
     const {
       enabled = true,
       price,
@@ -36,7 +40,7 @@ export function requirePayment(options: PaymentOptions) {
     const payload = req.headers["x-payment"] as string;
 
     if (!payload) {
-      const resource = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+      const resource = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
       res.status(402).json({
         x402Version: 1,
         error: "Payment required",
@@ -99,7 +103,9 @@ export function requirePayment(options: PaymentOptions) {
   };
 }
 
-export async function useFacilitator({ network, facilitator }: { network: string; facilitator?: string }) {
+export async function useFacilitator(
+  { network, facilitator }: { network: string; facilitator?: string },
+) {
   if (!RpcMap[network]) return { supported: false };
 
   const api = await useApi(network);

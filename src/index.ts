@@ -1,29 +1,19 @@
 // express utilities
-export {
-  requirePayment,
-  useFacilitator,
-  facilitatorRouter,
-} from "./express";
+export { facilitatorRouter, requirePayment, useFacilitator } from "./express";
 
 // Server utilities
-export {
-  verifyWithApi,
-  settleWithApi,
-} from "./server";
+export { settleWithApi, verifyWithApi } from "./server";
 
 export {
+  createUnsignedTransaction,
   decodePaymentHeader,
   RpcMap,
   sendAndWaitForFinalization,
   useApi,
-  createUnsignedTransaction,
 } from "./utils";
 
 // Client utilities
-export {
-  signWithKeypair,
-  withX402Interceptor,
-} from "./client";
+export { signWithKeypair, withX402Interceptor } from "./client";
 
 /*
 // Browser utilities
