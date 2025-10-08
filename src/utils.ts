@@ -1,6 +1,6 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { z } from "zod";
-import type { PaymentData, VaraNetwork } from "./types";
+import type { PaymentData } from "./types";
 import type { SignerPayloadJSON } from "@polkadot/types/types";
 
 export const RpcMap: Record<string, string> = {

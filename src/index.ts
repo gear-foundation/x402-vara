@@ -37,6 +37,5 @@ export type {
   PaymentData,
   PaymentOptions,
   TransactionResult,
-  VaraNetwork,
   WalletKeypair,
 } from "./types";

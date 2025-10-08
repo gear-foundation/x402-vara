@@ -2,20 +2,18 @@ import type { SignerPayloadJSON } from "@polkadot/types/types";
 import type { KeyringPair } from "@polkadot/keyring/types";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
-export type VaraNetwork = "vara" | "vara-testnet";
-
 export interface PaymentData {
   unsignedTransaction: SignerPayloadJSON;
   signature: string;
   signer: string;
-  network: VaraNetwork;
+  network: string;
 }
 
 export interface PaymentOptions {
   enabled?: boolean;
   price: { amount: string; asset: string };
   description: string;
-  network: VaraNetwork;
+  network: string;
   payTo: string;
   facilitator?: string;
 }
