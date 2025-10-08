@@ -11,13 +11,32 @@ export const RpcMap: Record<string, string> = {
 const API = new Map<string, ApiPromise>();
 
 export async function useApi(network: string): Promise<ApiPromise> {
-  if (!API.get(network)) {
-    const rpc = RpcMap[network];
-    const provider = new WsProvider(rpc);
-    const api = await ApiPromise.create({ provider });
-    API.set(network, api);
+  const oldApi = API.get(network);
+
+  if (oldApi && oldApi.isConnected) {
+    return oldApi;
   }
-  return API.get(network)!;
+
+  if (oldApi && !oldApi.isConnected) {
+    try {
+      oldApi.disconnect();
+    } catch (error) {
+      // Ignore disconnect errors
+    }
+    API.delete(network);
+  }
+
+  const rpc = RpcMap[network];
+  if (!rpc) {
+    throw new Error(`No RPC endpoint configured for network: ${network}`);
+  }
+
+  const provider = new WsProvider(rpc);
+  const api = await ApiPromise.create({ provider });
+  await api.isReady;
+  API.set(network, api);
+
+  return api;
 }
 
 export interface TransactionResult {
