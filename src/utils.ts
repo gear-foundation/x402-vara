@@ -20,7 +20,16 @@ export async function useApi(network: string): Promise<ApiPromise> {
   return API.get(network)!;
 }
 
-export async function sendAndWaitForFinalization(tx: any) {
+export interface TransactionResult {
+  txHash: string | null;
+  blockHash: string | null;
+  success: boolean;
+  message: string | null;
+}
+
+export async function sendAndWaitForFinalization(
+  tx: any,
+): Promise<TransactionResult> {
   return new Promise(async (resolve, reject) => {
     const txHash = tx.hash.toHex();
 

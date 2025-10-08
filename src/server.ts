@@ -13,7 +13,7 @@ import {
 } from "./utils";
 import type {
   PaymentData,
-  PaymentOptions,
+  SettleOptions,
   SettleResult,
   VerifyResult,
 } from "./types";
@@ -44,35 +44,46 @@ export const verifyWithApi =
     } as VerifyResult;
   };
 
-export const settleWithApi =
-  (api: any) => async (data: PaymentData): Promise<SettleResult> => {
-    const { unsignedTransaction, signature, signer } = data;
+export const settleWithApi = (api: any) =>
+async (
+  data: PaymentData,
+  options: SettleOptions = {},
+): Promise<SettleResult> => {
+  const { unsignedTransaction, signature, signer } = data;
+  const { waitForFinalization = false } = options;
 
-    const tx = api.tx(api.createType("Call", unsignedTransaction.method))
-      .addSignature(
-        signer,
-        signature,
-        unsignedTransaction,
-      );
+  const tx = api.tx(api.createType("Call", unsignedTransaction.method))
+    .addSignature(
+      signer,
+      signature,
+      unsignedTransaction,
+    );
 
-    let result: SettleResult = {
-      txHash: null,
-      success: false,
-      message: null,
-    };
+  let result: SettleResult = {
+    txHash: null,
+    success: false,
+    message: null,
+  };
 
-    try {
+  try {
+    if (!waitForFinalization) {
+      const txHash = await api.rpc.author.submitExtrinsic(tx);
+      result.success = true;
+      result.message = null;
+      result.txHash = u8aToHex(txHash);
+    } else {
       const { success, message, txHash } = await sendAndWaitForFinalization(
         tx,
-      ) as any;
+      );
       result.success = success;
       result.message = message;
       result.txHash = txHash;
-    } catch (e: any) {
-      console.log(e.message);
-      result.success = false;
-      result.message = e.message;
     }
+  } catch (e: any) {
+    console.log(e.message);
+    result.success = false;
+    result.message = e.message;
+  }
 
-    return result;
-  };
+  return result;
+};

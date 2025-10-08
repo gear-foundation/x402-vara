@@ -18,6 +18,10 @@ export interface PaymentOptions {
   facilitator?: string;
 }
 
+export interface SettleOptions {
+  waitForFinalization?: boolean;
+}
+
 export interface SettleResult {
   txHash: string | null;
   success: boolean;
