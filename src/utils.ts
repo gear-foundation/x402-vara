@@ -1,4 +1,5 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
+import { GearApi } from '@gear-js/api';
 import { z } from "zod";
 import type { PaymentData } from "./types";
 import type { SignerPayloadJSON } from "@polkadot/types/types";
@@ -31,8 +32,7 @@ export async function useApi(network: string): Promise<ApiPromise> {
     throw new Error(`No RPC endpoint configured for network: ${network}`);
   }
 
-  const provider = new WsProvider(rpc);
-  const api = await ApiPromise.create({ provider });
+  const api = await GearApi.create({ providerAddress: rpc })
   await api.isReady;
   API.set(network, api);
 

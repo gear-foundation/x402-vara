@@ -1,6 +1,6 @@
 {
   "name": "x402-vara",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "x402 payment protocol implementation for Vara Network",
   "type": "module",
   "main": "dist/index.js",
@@ -55,6 +55,7 @@
   "author": "btwiuse",
   "license": "MIT",
   "dependencies": {
+    "@gear-js/api": "^0.44.2",
     "@polkadot/api": "^16.4.8",
     "@polkadot/extension-dapp": "^0.62.1",
     "@polkadot/keyring": "^13.5.6",
