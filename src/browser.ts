@@ -9,7 +9,7 @@ import type {
 import { signWithKeypair } from "./client";
 import { useApi } from "./utils";
 
-import { web3FromAddress } from "@polkadot/extension-dapp";
+import { web3FromAddress, web3Enable } from "@polkadot/extension-dapp";
 
 // injected extension accounts don't have the sign() method, while keyring pairs do
 const isKeyringPair = (x: any) => !!x.sign;
@@ -19,6 +19,7 @@ export async function signWithWeb3(
   unsignedTransaction: SignerPayloadJSON,
   api: ApiPromise,
 ): Promise<{ signature: string }> {
+  await web3Enable("x402-vara");
   const injector = await web3FromAddress(keypair.address);
   if (!injector.signer || !injector.signer.signPayload) {
     throw new Error("No signer available from wallet");
