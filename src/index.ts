@@ -10,6 +10,8 @@ export {
   RpcMap,
   sendAndWaitForFinalization,
   useApi,
+  balanceOf,
+  pubkeyOf,
 } from "./utils";
 
 // Client utilities

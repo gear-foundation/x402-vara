@@ -3,6 +3,33 @@ import { GearApi } from '@gear-js/api';
 import { z } from "zod";
 import type { PaymentData } from "./types";
 import type { SignerPayloadJSON } from "@polkadot/types/types";
+import { u8aToHex } from "@polkadot/util";
+import { decodeAddress } from "@polkadot/util-crypto";
+import { VftProgram } from "@/lib/vft";
+
+export function pubkeyOf(addr: string): `0x${string}` {
+  if (addr.startsWith("0x")) {
+    return addr as `0x${string}`;
+  }
+  return u8aToHex(decodeAddress(addr));
+}
+
+export async function balanceOf(
+  api: any,
+  address: string,
+  asset?: `0x${string}`,
+): Promise<bigint> {
+  if (asset) {
+    const pubkey = pubkeyOf(address);
+    const vft = new VftProgram(api, asset);
+    const vftBalance = await vft.vft.balanceOf(pubkey).call();
+    return vftBalance;
+  } else {
+    const { data } = await api.query.system.account(address);
+    const freeBalance = data.free.toBigInt();
+    return freeBalance;
+  }
+}
 
 export const RpcMap: Record<string, string> = {
   "vara": "wss://rpc.vara.network",
