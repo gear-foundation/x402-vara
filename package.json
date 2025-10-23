@@ -1,6 +1,6 @@
 {
   "name": "x402-vara",
-  "version": "0.2.5",
+  "version": "0.2.7",
   "description": "x402 payment protocol implementation for Vara Network",
   "type": "module",
   "main": "dist/index.js",
@@ -30,6 +30,11 @@
       "import": "./dist/browser.js",
       "require": "./dist/browser.js",
       "types": "./dist/browser.d.ts"
+    },
+    "./lib": {
+      "import": "./dist/lib/index.js",
+      "require": "./dist/lib/index.js",
+      "types": "./dist/lib/index.d.ts"
     },
     "./client": {
       "import": "./dist/client.js",
