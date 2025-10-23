@@ -1,6 +1,6 @@
 {
   "name": "x402-vara",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "x402 payment protocol implementation for Vara Network",
   "type": "module",
   "main": "dist/index.js",
@@ -25,6 +25,11 @@
       "import": "./dist/express.js",
       "require": "./dist/express.js",
       "types": "./dist/express.d.ts"
+    },
+    "./next": {
+      "import": "./dist/next/index.js",
+      "require": "./dist/next/index.js",
+      "types": "./dist/next/index.d.ts"
     },
     "./browser": {
       "import": "./dist/browser.js",
@@ -69,6 +74,7 @@
     "@polkadot/util-crypto": "^13.5.6",
     "axios": "^1.10.0",
     "express": "^5.1.0",
+    "next": "^16.0.0",
     "sails-js": "^0.5.1",
     "zod": "^4.1.11"
   },
