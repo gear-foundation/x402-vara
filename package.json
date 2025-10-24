@@ -2,6 +2,9 @@
   "name": "x402-vara",
   "version": "0.3.3",
   "description": "x402 payment protocol implementation for Vara Network",
+  "workspaces": [
+    "examples/*"
+  ],
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

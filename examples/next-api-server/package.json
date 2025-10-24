@@ -1,0 +1,17 @@
+{
+  "name": "next-api-server",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "16.0.0",
+    "x402-vara": "^0.3.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.2"
+  }
+}
