@@ -24,7 +24,7 @@ export interface PaymentRequirements {
   /** Scheme of the payment protocol to use (e.g., "exact") */
   scheme: string;
   
-  /** Network of the blockchain to send payment on (e.g., "testnet", "mainnet") */
+  /** Network of the blockchain to send payment on (e.g., "vara", "vara-testnet") */
   network: string;
   
   /** Maximum amount required to pay for the resource in atomic units */

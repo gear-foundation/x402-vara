@@ -1,5 +1,5 @@
 /**
- * x402 Payment Middleware for Aptos
+ * x402 Payment Middleware for Vara Network
  * Following official Coinbase x402 protocol specification
  * https://github.com/coinbase/x402
  */
