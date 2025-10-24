@@ -1,11 +1,11 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import { GearApi } from '@gear-js/api';
 import { z } from "zod";
-import type { PaymentData } from "./types";
+import type { PaymentData } from "../types";
 import type { SignerPayloadJSON } from "@polkadot/types/types";
 import { u8aToHex } from "@polkadot/util";
 import { decodeAddress } from "@polkadot/util-crypto";
-import { VftProgram } from "./lib/vft";
+import { VftProgram } from "../lib/vft";
 
 export function pubkeyOf(addr: string): `0x${string}` {
   if (addr.startsWith("0x")) {
