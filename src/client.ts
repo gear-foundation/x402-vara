@@ -6,7 +6,7 @@ import type {
   KeyringPair,
   WalletKeypair,
 } from "./types";
-import { createUnsignedTransaction, useApi } from "./utils";
+import { paymentHeader } from "./utils";
 
 export async function signWithKeypair(
   keypair: WalletKeypair,
@@ -35,32 +35,10 @@ export function withX402Interceptor(
     async (error) => {
       if (error.response) {
         if (error.response.status === 402) {
-          let { accepts } = error.response.data;
-          let { network, maxAmountRequired, resource, payTo, facilitator } = accepts[0];
-          let api = await useApi(network);
-          const tx = api.tx.balances.transferKeepAlive(payTo, maxAmountRequired);
-          const unsignedTransaction = await createUnsignedTransaction(
-            api,
-            keypair.address,
-            tx,
-          );
-          const { signature } = await signWith(
-            keypair,
-            unsignedTransaction,
-            api,
-          );
-          const data = {
-            x402Version: 1,
-            scheme: "exact",
-            payload: {
-              transaction: unsignedTransaction,
-              signature,
-            },
-            network,
-          };
-          const paymentHeader = btoa(JSON.stringify(data));
+          const { accepts } = error.response.data;
+          const header = await paymentHeader(accepts[0], keypair, signWith);
           const originalConfig = error.config;
-          originalConfig.headers["X-PAYMENT"] = paymentHeader;
+          originalConfig.headers["X-PAYMENT"] = header;
           originalConfig.headers["Access-Control-Expose-Headers"] =
             "X-PAYMENT-RESPONSE";
           const secondResponse = await axiosClient.request(originalConfig);

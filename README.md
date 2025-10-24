@@ -16,7 +16,7 @@ bun i x402-vara
 ### Server-side (Express)
 
 ```typescript
-import { requirePayment, facilitatorRouter } from 'x402-vara/express';
+import { requirePayment } from 'x402-vara/express';
 
 // Use the payment middleware
 app.get('/api/pay/premium',
@@ -30,9 +30,37 @@ app.get('/api/pay/premium',
     res.json({ message: "Access granted!" });
   }
 );
+```
 
-// Use facilitator router if needed
-app.use('/api/facilitator', facilitatorRouter);
+### Server-side (Next.js)
+
+```typescript
+import { paymentMiddleware } from "x402-vara/next";
+
+// Configure protected routes and their payment requirements
+export const middleware = paymentMiddleware(
+  process.env.PAYMENT_RECIPIENT_ADDRESS!,
+  {
+    "/api/protected/weather": [
+      {
+        price: "1000000",
+        asset: "0xAssetProgramId...",
+        network: "vara-testnet",
+        config: {
+          description: "Access to weather data API (pay in VFT token)",
+          extra: {
+            name: "WUSDC",
+            decimals: 6,
+          },
+        },
+      },
+    ],
+  },
+  {
+    // Facilitator URL is REQUIRED for x402 protocol
+    url: process.env.FACILITATOR_URL!,
+  },
+);
 ```
 
 ### Client-side (Axios)
@@ -50,8 +78,9 @@ const response = await apiClient.get('http://localhost:3001/api/pay/premium');
 
 ## Used by
 
-- https://github.com/varazone/x402-vara-express-demo
 - https://github.com/varazone/x402-vara-next-demo
+- https://github.com/varazone/x402-vara-next-facilitator
+- https://github.com/varazone/x402-vara-express-demo
 
 ## API Reference
 

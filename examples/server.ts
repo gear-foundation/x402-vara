@@ -31,12 +31,33 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+// Paid endpoint - one-time access/payment ($0.10 WUSDC)
+app.get(
+  "/api/pay/hello-vft",
+  requirePayment({
+    price: "100000",
+    asset: "0x64f9def5a6da5a2a847812d615151a88f8c508e062654885267339a8bf29e52f",
+    description: "Example paid access to a GET endpoint (via VFT token)",
+    network,
+    payTo,
+    facilitator,
+  }),
+  (req, res) => {
+    const txHash = res.get("X-PAYMENT-RESPONSE");
+
+    res.json({
+      hello: "vft",
+      txHash,
+    });
+  },
+);
+
 // Paid endpoint - one-time access/payment ($0.10)
 app.get(
   "/api/pay/hello",
   requirePayment({
     price: "100000000000",
-    description: "Example paid access to a GET endpoint",
+    description: "Example paid access to a GET endpoint (via native asset)",
     network,
     payTo,
     facilitator,
@@ -62,6 +83,7 @@ app.listen(port, () => {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📋 Payment Options:
    - /api/pay/hello Price per request: 0.10 VARA
+   - /api/pay/hello-vft Price per request: 0.10 WUSDC
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🛠️  This is a template! Customize it for your app.
 📚 Learn more: https://x402.org

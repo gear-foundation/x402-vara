@@ -17,6 +17,7 @@ $ PORT=3001 bun server.ts
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📋 Payment Options:
    - /api/pay/hello Price per request: 0.10 VARA
+   - /api/pay/hello-vft Price per request: 0.10 WUSDC
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🛠️  This is a template! Customize it for your app.
 📚 Learn more: https://x402.org
@@ -88,40 +89,50 @@ X-Powered-By: Express
 X-PAYMENT-RESPONSE: 0xb262c664b0e7ef43bb3e99ff6d24babea938a3f612dc3e37f284fdf746767804
 ```
 
-Under the hood, `x-payment.ts` produces a json payload with signature like this:
+It's almost the same with VFT payment, except you need to specify the token program address via `ASSET=0x...`
+
+```
+$ curl -I localhost:3001/api/pay/hello-vft -H "X-PAYMENT: $(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW ASSET=0x64f9def5a6da5a2a847812d615151a88f8c508e062654885267339a8bf29e52f bun x-payment.ts | base64 -w 0)"
+...
+```
+
+Under the hood, `x-payment.ts` produces a json payload with signature like the following, which will be base64 encoded later and sent via the `X-PAYMENT` header:
 
 ```
 $ env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts
 {
+  "x402Version": 1,
+  "scheme": "exact",
   "network": "vara-testnet",
-  "unsignedTransaction": {
-    "specVersion": "0x00000780",
-    "transactionVersion": "0x00000001",
-    "address": "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
-    "blockHash": "0x74d014f3303007763ba656b65f28846a953e3ec69fd4a11973291d95ced3d6a6",
-    "blockNumber": "0x0145bfcc",
-    "era": "0xc500",
-    "genesisHash": "0x525639f713f397dcf839bd022cd821f367ebcf179de7b9253531f8adbe5436d6",
-    "method": "0x050300d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d0700e8764817",
-    "nonce": "0x00007b25",
-    "signedExtensions": [
-      "StakingBlackList",
-      "CheckNonZeroSender",
-      "CheckSpecVersion",
-      "CheckTxVersion",
-      "CheckGenesis",
-      "CheckMortality",
-      "CheckNonce",
-      "CheckWeight",
-      "ChargeTransactionPayment",
-      "CheckMetadataHash"
-    ],
-    "tip": "0x00000000000000000000000000000000",
-    "version": 4
-  },
-  "signature": "0x0198a0712d396197c0684056ad795b5f4ae4bcc39e3734cf9f964fd3504e5bbd257c8f4aca2ebded1719719d5e2adb349f5b52cc5dfec4c5c380153964c186528e",
-  "signer": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
-} 
+  "payload": {
+    "transaction": {
+      "specVersion": "0x00000780",
+      "transactionVersion": "0x00000001",
+      "address": "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+      "blockHash": "0xef05845f28c81aed22de5ade250a9fa24926a9f792dd23db480d6f537f4340d0",
+      "blockNumber": "0x014cfcc2",
+      "era": "0x2500",
+      "genesisHash": "0x525639f713f397dcf839bd022cd821f367ebcf179de7b9253531f8adbe5436d6",
+      "method": "0x050300d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d0700e8764817",
+      "nonce": "0x00007c6a",
+      "signedExtensions": [
+        "StakingBlackList",
+        "CheckNonZeroSender",
+        "CheckSpecVersion",
+        "CheckTxVersion",
+        "CheckGenesis",
+        "CheckMortality",
+        "CheckNonce",
+        "CheckWeight",
+        "ChargeTransactionPayment",
+        "CheckMetadataHash"
+      ],
+      "tip": "0x00000000000000000000000000000000",
+      "version": 4
+    },
+    "signature": "0x017ec1a3f2c322ed7e44a447baf727b8bed821e329044be45e213957d0273fc8301c9a8134752d1ff58db958a9dc6437fec981fb2513e9b43b6d666694138c738a"
+  }
+}
 ```
 
 To make things easier, use `curl-x402-vara.ts` to add the x-payment header automatically
@@ -146,4 +157,15 @@ $ bun curl-x402-vara.ts http://localhost:3001/api/health
     payTo: "kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW",
   },
 }
+```
+
+Caveat: currently curl-x402-vara.ts doesn't support specifying the paying asset.
+
+When there are multiple acceptable payment options, it will always pick the first.
+
+For example, the following resource can be paid in VARA, and WUSDC token. The script will always choose the option.
+
+```
+$ bun curl-x402-vara.ts https://x402-vara-next-demo.up.railway.app/api/protected/weather
+...
 ```

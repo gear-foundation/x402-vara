@@ -6,12 +6,13 @@ import {
   sr25519Verify,
 } from "@polkadot/util-crypto";
 import { hexToU8a, u8aToHex } from "@polkadot/util";
-import { createUnsignedTransaction, useApi } from "x402-vara/utils";
+import { createUnsignedTransaction, useApi, buildTransferTx } from "x402-vara/utils";
 import { signWithKeypair } from "x402-vara/client";
 
 const network = process.env.NETWORK;
 const amount = process.env.AMOUNT;
 const payTo = process.env.PAY_TO;
+const asset = process.env.ASSET || undefined;
 
 if (!network || !amount || !payTo) {
   console.error("failed to load env vars: NETWORK/AMOUNT/PAY_TO");
@@ -26,7 +27,7 @@ const alice = testKeypairs[1];
 const api = await useApi(network);
 
 // construct the tx
-const tx = api.tx.balances.transferKeepAlive(payTo, amount);
+const tx = await buildTransferTx(api, {payTo, maxAmountRequired: amount, asset})
 
 const unsignedTransaction = await createUnsignedTransaction(
   api,
@@ -43,7 +44,8 @@ const { signature } = await signWithKeypair(
 const data = {
   x402Version: 1,
   scheme: "exact",
-  network: "vara-testnet",
+  asset,
+  network,
   payload: {
     transaction: unsignedTransaction,
     signature,
