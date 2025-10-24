@@ -169,3 +169,72 @@ For example, the following resource can be paid in VARA, and WUSDC token. The sc
 $ bun curl-x402-vara.ts https://x402-vara-next-demo.up.railway.app/api/protected/weather
 ...
 ```
+
+The base64 encoded x-payment header will be sent to facilitator for verification and settlement. That process is handled by the middleware on the server side.
+
+To demonstrate how to call the /verify and /settle endpoints by hand, we first construct the `PAYMENT_HEADER` string
+
+This time we use the VFT token `ASSET=0x...` for payment instead of the native VARA token:
+
+```
+$ PAYMENT_HEADER="$(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGfXzQ99jakxFMQEox9iQYQ6zfMkwScJTScuPLSovqxjPbkXW ASSET=0x64f9def5a6da5a2a847812d615151a88f8c508e062654885267339a8bf29e52f bun x-payment.ts | base64 -w 0)"
+ewogIC...
+```
+
+Now let's construct the request payload and save it to `/tmp/payload.json`
+```
+$ curl -sL https://x402-vara-next-demo.up.railway.app/api/protected/weather | jq --arg header "$PAYMENT_HEADER" '{
+    x402Version,
+    paymentHeader: $header,
+    paymentRequirements: .accepts[1]
+}' | tee /tmp/payload.json
+{
+  "x402Version": 1,
+  "paymentHeader": "ewogIC...",
+  "paymentRequirements": {
+    "scheme": "exact",
+    "network": "vara-testnet",
+    "maxAmountRequired": "1000000000000",
+    "resource": "https://localhost:8000/api/protected/weather",
+    "description": "Access to weather data API (pay in native token)",
+    "mimeType": "application/json",
+    "outputSchema": null,
+    "payTo": "kGfXzQ99jakxFMQEox9iQYQ6zfMkwScJTScuPLSovqxjPbkXW",
+    "maxTimeoutSeconds": 60l
+    "extra": null
+  }
+}
+```
+
+Then we can send it to the /verify endpoint:
+
+```
+$ curl -sL https://x402-vara-next-demo.up.railway.app/api/facilitator/verify -d @/tmp/payload.json | jq .
+{
+  "isValid": true,
+  "invalidReason": null
+}
+```
+
+and settle it:
+
+```
+$ curl -sL https://x402-vara-next-demo.up.railway.app/api/facilitator/settle -d @/tmp/payload.json | jq .
+{
+  "success": true,
+  "error": null,
+  "txHash": "0xf2cb5111283581181caa217dff4d8f33e9fb290426520fb6e92088eeba953a9d",
+  "networkId": "vara-testnet"
+}
+```
+
+If you verify the same payload again, it will still appear valid. but when you settle it again, you are expected to get this error:
+
+```
+{
+  "success": false,
+  "error": "1012: Transaction is temporarily banned",
+  "txHash": null,
+  "networkId": null
+}
+```
