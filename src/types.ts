@@ -4,7 +4,7 @@ import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
 export interface PaymentData {
   x402Version: number;
-  schema: string;
+  scheme: string;
   network: string;
   asset?: `0x${string}`;
   payload: {

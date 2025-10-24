@@ -126,7 +126,7 @@ export async function sendAndWaitForFinalization(
 
 const PaymentDataSchema = z.object({
   x402Version: z.number(),
-  schema: z.string(),
+  scheme: z.string(),
   network: z.string(),
   asset: z.string().optional(),
   payload: z.object({

@@ -51,7 +51,7 @@ export function withX402Interceptor(
           );
           const data = {
             x402Version: 1,
-            schema: "exact",
+            scheme: "exact",
             payload: {
               transaction: unsignedTransaction,
               signature,
