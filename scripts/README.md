@@ -1,6 +1,8 @@
-# x402-vara examples
+# x402-vara scripts
 
-Start a local server with routes:
+## server.ts
+
+Start a local express server with routes:
 
 - /api/health free endpoint
 - /api/pay/hello paywalled endpoint
@@ -65,10 +67,13 @@ $ curl localhost:3001/api/pay/hello
 }
 ```
 
-Request the paid route with signed x-payment header, got protected response behind paywall:
+## x-payment-json.ts
+
+Request the paid route with signed x-payment header, got protected resource behind paywall:
 
 ```
-$ curl localhost:3001/api/pay/hello -H "X-PAYMENT: $(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts | base64 -w 0)"
+$ PAYMENT_HEADER="$(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment-json.ts | base64 -w 0)"
+$ curl localhost:3001/api/pay/hello -H "X-PAYMENT: $PAYMENT_HEADER"
 {
   "hello": "world",
   "txHash": "0x749ff0cd5c4e181bf22cb777d3c63370bc9555a067a60d8cdbc2abd7c5d87328"
@@ -78,7 +83,8 @@ $ curl localhost:3001/api/pay/hello -H "X-PAYMENT: $(env NETWORK=vara-testnet AM
 You can use `curl -I` to print the headers only`
 
 ```
-$ curl -I localhost:3001/api/pay/hello -H "X-PAYMENT: $(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts | base64 -w 0)"
+$ PAYMENT_HEADER="$(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment-json.ts | base64 -w 0)"
+$ curl -I localhost:3001/api/pay/hello -H "X-PAYMENT: $PAYMENT_HEADER"
 HTTP/1.1 200 OK
 Access-Control-Allow-Origin: *
 Content-Type: application/json; charset=utf-8
@@ -92,14 +98,15 @@ X-PAYMENT-RESPONSE: 0xb262c664b0e7ef43bb3e99ff6d24babea938a3f612dc3e37f284fdf746
 It's almost the same with VFT payment, except you need to specify the token program address via `ASSET=0x...`
 
 ```
-$ curl -I localhost:3001/api/pay/hello-vft -H "X-PAYMENT: $(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW ASSET=0x64f9def5a6da5a2a847812d615151a88f8c508e062654885267339a8bf29e52f bun x-payment.ts | base64 -w 0)"
+$ PAYMENT_HEADER="$(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW ASSET=0x64f9def5a6da5a2a847812d615151a88f8c508e062654885267339a8bf29e52f bun x-payment-json.ts | base64 -w 0)"
+$ curl -I localhost:3001/api/pay/hello-vft -H "X-PAYMENT: $PAYMENT_HEADER"
 ...
 ```
 
-Under the hood, `x-payment.ts` produces a json payload with signature like the following, which will be base64 encoded later and sent via the `X-PAYMENT` header:
+Under the hood, `x-payment-json.ts` produces a json payload with signature like the following, which will be base64 encoded later and sent via the `X-PAYMENT` header:
 
 ```
-$ env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts
+$ env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment-json.ts
 {
   "x402Version": 1,
   "scheme": "exact",
@@ -134,6 +141,8 @@ $ env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab
   }
 }
 ```
+
+## curl-x402-vara.ts
 
 To make things easier, use `curl-x402-vara.ts` to add the x-payment header automatically
 
@@ -170,6 +179,8 @@ $ bun curl-x402-vara.ts https://x402-vara-next-demo.up.railway.app/api/protected
 ...
 ```
 
+## Calling the facilitator API
+
 The base64 encoded x-payment header will be sent to facilitator for verification and settlement. That process is handled by the middleware on the server side.
 
 To demonstrate how to call the /verify and /settle endpoints by hand, we first construct the `PAYMENT_HEADER` string
@@ -177,8 +188,8 @@ To demonstrate how to call the /verify and /settle endpoints by hand, we first c
 This time we use the VFT token `ASSET=0x...` for payment instead of the native VARA token:
 
 ```
-$ PAYMENT_HEADER="$(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGfXzQ99jakxFMQEox9iQYQ6zfMkwScJTScuPLSovqxjPbkXW ASSET=0x64f9def5a6da5a2a847812d615151a88f8c508e062654885267339a8bf29e52f bun x-payment.ts | base64 -w 0)"
-ewogIC...
+$ PAYMENT_HEADER="$(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGfXzQ99jakxFMQEox9iQYQ6zfMkwScJTScuPLSovqxjPbkXW ASSET=0x64f9def5a6da5a2a847812d615151a88f8c508e062654885267339a8bf29e52f bun x-payment-json.ts | base64 -w 0)"
+ewogIC...==
 ```
 
 Now let's construct the request payload and save it to `/tmp/payload.json`
@@ -190,7 +201,7 @@ $ curl -sL https://x402-vara-next-demo.up.railway.app/api/protected/weather | jq
 }' | tee /tmp/payload.json
 {
   "x402Version": 1,
-  "paymentHeader": "ewogIC...",
+  "paymentHeader": "ewogIC...==",
   "paymentRequirements": {
     "scheme": "exact",
     "network": "vara-testnet",
