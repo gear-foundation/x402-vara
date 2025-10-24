@@ -15,6 +15,8 @@ bun i x402-vara
 
 ### Server-side (Express)
 
+Add a paywall to a single API endpoint that charges 0.1 VARA per request
+
 ```typescript
 import { requirePayment } from 'x402-vara/express';
 
@@ -32,7 +34,23 @@ app.get('/api/pay/premium',
 );
 ```
 
+To accept VFT tokens, specify the token program id via the optional `asset` field:
+
+```
+...
+  requirePayment({
+    price: "100000",
+    asset: "0xAssetProgramId...",
+...
+```
+
+Currently the express middleware isn't as feature-complete as the Next.js implementation, but it doesn't require an external facilitator to work, which makes it great for development purposes.
+
+If you need to define multiple payment options on a single route, it is recommended to use the Next.js middleware instead.
+
 ### Server-side (Next.js)
+
+In Next.js 15, add the following exported const in `/middleware.ts`. In version 16, the file is renamed to `/proxy.ts` (see [release notes](https://nextjs.org/blog/next-16#proxyts-formerly-middlewarets))
 
 ```typescript
 import { paymentMiddleware } from "x402-vara/next";
@@ -94,6 +112,8 @@ const response = await apiClient.get('http://localhost:3001/api/pay/premium');
 - https://github.com/varazone/x402-vara-next-facilitator
 - https://github.com/varazone/x402-vara-express-demo
 
+See also: [examples](./examples) and [scripts](./scripts)
+
 ## API Reference
 
 ### Server Exports
@@ -108,7 +128,6 @@ const response = await apiClient.get('http://localhost:3001/api/pay/premium');
 - `withX402Interceptor(axiosInstance, walletClient)` - Axios interceptor for automatic payments
 - `createUnsignedTransaction(api, address, tx)` - Create unsigned transaction
 - `signWith(keypair, unsignedTransaction, api)` - Sign transaction with wallet
-- `useApi(network)` - Get Polkadot.js API instance for Vara network
 
 ## License
 
