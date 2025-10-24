@@ -63,6 +63,18 @@ export const middleware = paymentMiddleware(
 );
 ```
 
+### Facilitator (optional)
+
+You can directly use the public facilitator for testing purposes:
+
+```
+FACILITATOR_URL=https://x402-vara-next-facilitator.up.railway.app/api/facilitator
+```
+
+Or run your own instance by cloning [varazone/x402-vara-next-facilitator](https://github.com/varazone/x402-vara-next-facilitator)
+
+Note: the facilitator service connects to remote RPC nodes via WebSocket. However, Some serverless providers like Vercel do not support persistent WS connections. So make sure you deploy it on a platform with good support for WebSocket.
+
 ### Client-side (Axios)
 
 ```typescript
