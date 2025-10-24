@@ -51,8 +51,8 @@ export function paymentMiddleware(
       recipient: recipientAddress,
       configs: routeConfigs.map(config => ({
         price: config.price,
-        asset: config.asset || null,
-        network: config.network || "testnet",
+        asset: config.asset,
+        network: config.network,
       })),
       facilitator: facilitatorUrl,
       hasPayment: !!paymentHeader,
@@ -69,17 +69,11 @@ export function paymentMiddleware(
 
     // Build payment requirements for each configuration per x402 spec
     const paymentRequirements: PaymentRequirements[] = routeConfigs.map(routeConfig => {
-      // Map simple network names to full Aptos network identifiers
-      const simpleNetwork = routeConfig.network || "testnet";
-      const network = simpleNetwork === "mainnet"
-        ? VARA_MAINNET
-        : simpleNetwork === "testnet"
-        ? VARA_TESTNET
-        : `vara-${simpleNetwork}`;
+      const network = routeConfig.network || "vara-testnet";
 
       return {
         scheme: X402_SCHEME,
-        network: network,
+        network,
         maxAmountRequired: routeConfig.price,
         resource: request.url,
         description: routeConfig.config?.description || "Access to protected resource",
