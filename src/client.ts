@@ -36,10 +36,9 @@ export function withX402Interceptor(
       if (error.response) {
         if (error.response.status === 402) {
           let { accepts } = error.response.data;
-          let { network, price, resource, payTo, facilitator } = accepts[0];
-          let amount = Number(price.amount) * 1e12;
+          let { network, maxAmountRequired, resource, payTo, facilitator } = accepts[0];
           let api = await useApi(network);
-          const tx = api.tx.balances.transferKeepAlive(payTo, amount);
+          const tx = api.tx.balances.transferKeepAlive(payTo, maxAmountRequired);
           const unsignedTransaction = await createUnsignedTransaction(
             api,
             keypair.address,
@@ -51,9 +50,12 @@ export function withX402Interceptor(
             api,
           );
           const data = {
-            unsignedTransaction,
-            signature,
-            signer: keypair.address,
+            x402Version: 1,
+            schema: "exact",
+            payload: {
+              transaction: unsignedTransaction,
+              signature,
+            },
             network,
           };
           const paymentHeader = btoa(JSON.stringify(data));

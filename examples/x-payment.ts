@@ -26,7 +26,7 @@ const alice = testKeypairs[1];
 const api = await useApi(network);
 
 // construct the tx
-const tx = api.tx.balances.transferKeepAlive(payTo, Number(amount) * 1e12);
+const tx = api.tx.balances.transferKeepAlive(payTo, amount);
 
 const unsignedTransaction = await createUnsignedTransaction(
   api,
@@ -41,10 +41,13 @@ const { signature } = await signWithKeypair(
 );
 
 const data = {
+  x402Version: 1,
+  schema: "exact",
   network: "vara-testnet",
-  unsignedTransaction,
-  signature,
-  signer: alice.address,
+  payload: {
+    transaction: unsignedTransaction,
+    signature,
+  },
 };
 
 console.log(JSON.stringify(data, null, "  "));

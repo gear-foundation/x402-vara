@@ -125,10 +125,14 @@ export async function sendAndWaitForFinalization(
 }
 
 const PaymentDataSchema = z.object({
-  unsignedTransaction: z.any(),
-  signature: z.string(),
-  signer: z.string(),
-  network: z.enum(["vara", "vara-testnet"]),
+  x402Version: z.number(),
+  schema: z.string(),
+  network: z.string(),
+  asset: z.string().optional(),
+  payload: z.object({
+    transaction: z.any(),
+    signature: z.string(),
+  }),
 });
 
 export function decodePaymentHeader(x: string): PaymentData | null {

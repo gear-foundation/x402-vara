@@ -35,10 +35,7 @@ app.get("/api/health", (req, res) => {
 app.get(
   "/api/pay/hello",
   requirePayment({
-    price: {
-      amount: "0.10",
-      asset: "VARA",
-    },
+    price: "100000000000",
     description: "Example paid access to a GET endpoint",
     network,
     payTo,

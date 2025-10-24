@@ -25,7 +25,9 @@ export function requirePayment(options: PaymentOptions) {
   ) => {
     const {
       enabled = true,
+      extra = null,
       price,
+      asset,
       description,
       network,
       payTo,
@@ -43,14 +45,18 @@ export function requirePayment(options: PaymentOptions) {
       const resource = `${req.protocol}://${req.get("host")}${req.originalUrl}`;
       res.status(402).json({
         x402Version: 1,
-        error: "Payment required",
         accepts: [{
           scheme: "exact",
           description,
           resource,
           network,
-          price,
+          maxAmountRequired: price,
+          asset,
           payTo,
+          mimeType: "application/json",
+          maxTimeoutSeconds: 60,
+          outputSchema: null,
+          extra,
         }],
       });
       return;

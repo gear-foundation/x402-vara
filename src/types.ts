@@ -3,19 +3,25 @@ import type { KeyringPair } from "@polkadot/keyring/types";
 import type { InjectedAccountWithMeta } from "@polkadot/extension-inject/types";
 
 export interface PaymentData {
-  unsignedTransaction: SignerPayloadJSON;
-  signature: string;
-  signer: string;
+  x402Version: number;
+  schema: string;
   network: string;
+  asset?: `0x${string}`;
+  payload: {
+    transaction: SignerPayloadJSON,
+    signature: string,
+  };
 }
 
 export interface PaymentOptions {
   enabled?: boolean;
-  price: { amount: string; asset: string };
+  asset?: `0x${string}`;
+  price: string;
   description: string;
   network: string;
   payTo: string;
   facilitator?: string;
+  extra?: object | null;
 }
 
 export interface SettleOptions {

@@ -47,18 +47,18 @@ Request the paid route directly, got error response with status 402:
 $ curl localhost:3001/api/pay/hello
 {
   "x402Version": 1,
-  "error": "Payment required",
   "accepts": [
     {
       "scheme": "exact",
       "description": "Example paid access to a GET endpoint",
       "resource": "http://localhost:3001/api/pay/hello",
       "network": "vara-testnet",
-      "price": {
-        "amount": "0.10",
-        "asset": "VARA"
-      },
-      "payTo": "kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW"
+      "maxAmountRequired": "100000000000",
+      "payTo": "kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW",
+      "mimeType": "application/json",
+      "maxTimeoutSeconds": 60,
+      "outputSchema": null,
+      "extra": null
     }
   ]
 }
@@ -67,7 +67,7 @@ $ curl localhost:3001/api/pay/hello
 Request the paid route with signed x-payment header, got protected response behind paywall:
 
 ```
-$ curl localhost:3001/api/pay/hello -H "X-PAYMENT: $(env NETWORK=vara-testnet AMOUNT=0.10 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts | base64 -w 0)"
+$ curl localhost:3001/api/pay/hello -H "X-PAYMENT: $(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts | base64 -w 0)"
 {
   "hello": "world",
   "txHash": "0x749ff0cd5c4e181bf22cb777d3c63370bc9555a067a60d8cdbc2abd7c5d87328"
@@ -77,7 +77,7 @@ $ curl localhost:3001/api/pay/hello -H "X-PAYMENT: $(env NETWORK=vara-testnet AM
 You can use `curl -I` to print the headers only`
 
 ```
-$ curl -I localhost:3001/api/pay/hello -H "X-PAYMENT: $(env NETWORK=vara-testnet AMOUNT=0.10 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts | base64 -w 0)"
+$ curl -I localhost:3001/api/pay/hello -H "X-PAYMENT: $(env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts | base64 -w 0)"
 HTTP/1.1 200 OK
 Access-Control-Allow-Origin: *
 Content-Type: application/json; charset=utf-8
@@ -91,7 +91,7 @@ X-PAYMENT-RESPONSE: 0xb262c664b0e7ef43bb3e99ff6d24babea938a3f612dc3e37f284fdf746
 Under the hood, `x-payment.ts` produces a json payload with signature like this:
 
 ```
-$ env NETWORK=vara-testnet AMOUNT=0.10 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts
+$ env NETWORK=vara-testnet AMOUNT=100000000000 PAY_TO=kGkLEU3e3XXkJp2WK4eNpVmSab5xUNL9QtmLPh8QfCL2EgotW bun x-payment.ts
 {
   "network": "vara-testnet",
   "unsignedTransaction": {

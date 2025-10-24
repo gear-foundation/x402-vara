@@ -21,11 +21,8 @@ import { requirePayment, facilitatorRouter } from 'x402-vara/express';
 // Use the payment middleware
 app.get('/api/pay/premium',
   requirePayment({
-    price: {
-      amount: "1.00",
-      asset: "VARA",
-    },
-    description: "Premium content access",
+    price: "100000000000",
+    description: "Premium content access (0.10 VARA)",
     network: "vara-testnet",
     payTo: "your-vara-address",
   }),

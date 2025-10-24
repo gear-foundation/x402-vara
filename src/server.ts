@@ -10,6 +10,7 @@ import {
   RpcMap,
   sendAndWaitForFinalization,
   useApi,
+  pubkeyOf,
 } from "./utils";
 import type {
   PaymentData,
@@ -20,18 +21,19 @@ import type {
 
 export const verifyWithApi =
   (api: any) => async (data: PaymentData): Promise<VerifyResult> => {
-    const { unsignedTransaction, signature, signer } = data;
+    const { transaction, signature } = data.payload;
+    const signer = pubkeyOf(transaction.address);
     const hashOrRaw = (u8a: Uint8Array) =>
       u8a.length > 256 ? blake2AsU8a(u8a) : u8a;
     const rawUnsignedTransaction = api.registry.createType(
       "ExtrinsicPayload",
-      unsignedTransaction,
+      transaction,
       {
-        version: unsignedTransaction.version,
+        version: transaction.version,
       },
     );
-    const payload = hashOrRaw(rawUnsignedTransaction.toU8a({ method: true }));
-    const result = signatureVerify(payload, signature, signer);
+    const unsignedPayload = hashOrRaw(rawUnsignedTransaction.toU8a({ method: true }));
+    const result = signatureVerify(unsignedPayload, signature, signer);
     if (!result.isValid) {
       return {
         isValid: false,
@@ -49,14 +51,15 @@ async (
   data: PaymentData,
   options: SettleOptions = {},
 ): Promise<SettleResult> => {
-  const { unsignedTransaction, signature, signer } = data;
+  const { transaction, signature } = data.payload;
+  const signer = pubkeyOf(transaction.address);
   const { waitForFinalization = false } = options;
 
-  const tx = api.tx(api.createType("Call", unsignedTransaction.method))
+  const tx = api.tx(api.createType("Call", transaction.method))
     .addSignature(
       signer,
       signature,
-      unsignedTransaction,
+      transaction,
     );
 
   let result: SettleResult = {
