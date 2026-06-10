@@ -1,0 +1,30 @@
+{
+  "network": "vara-testnet",
+  "unsignedTransaction": {
+    "specVersion": "0x00000776",
+    "transactionVersion": "0x00000001",
+    "address": "0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d",
+    "blockHash": "0xa81983ab445ffc13db2924be7e090e0de786f9badfc621e7c96331979d26551b",
+    "blockNumber": "0x01439550",
+    "era": "0x0501",
+    "genesisHash": "0x525639f713f397dcf839bd022cd821f367ebcf179de7b9253531f8adbe5436d6",
+    "method": "0x050300d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d070010a5d4e8",
+    "nonce": "0x00007af7",
+    "signedExtensions": [
+      "StakingBlackList",
+      "CheckNonZeroSender",
+      "CheckSpecVersion",
+      "CheckTxVersion",
+      "CheckGenesis",
+      "CheckMortality",
+      "CheckNonce",
+      "CheckWeight",
+      "ChargeTransactionPayment",
+      "CheckMetadataHash"
+    ],
+    "tip": "0x00000000000000000000000000000000",
+    "version": 4
+  },
+  "signature": "0x01501e5b536247c44d3eee79ea7aed449f6ecf1b0b8204a6a86db0016aa735ca0b7bfe7f75fecad4f8a32e68aa0b3a132d99f438de1cbe18d216f3851a4093da8a",
+  "signer": "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY"
+}
